@@ -19,6 +19,7 @@
 
             <div class="tablist" role="tablist" aria-label="Site sections">
                 <button class="tab-button" id="tab-overview" role="tab" aria-controls="panel-overview" aria-selected="true" type="button">App Overview</button>
+                <button class="tab-button" id="tab-apps" role="tab" aria-controls="panel-apps" aria-selected="false" type="button">Try the App</button>
                 <button class="tab-button" id="tab-policy" role="tab" aria-controls="panel-policy" aria-selected="false" type="button">Privacy Policy</button>
             </div>
         </header>
@@ -92,6 +93,23 @@
                 </article>
             </section>
 
+            <section class="panel" id="panel-apps" role="tabpanel" aria-labelledby="tab-apps" hidden>
+                <article class="content-card">
+                    <h2>Open Arcana Flux</h2>
+                    <p>Launch the live web version instantly, or check back in a few days for the Android version. </p>
+                    <div class="app-links">
+                        <a class="link-card" href="https://expo-tarot-app.vercel.app/" target="_blank" rel="noopener noreferrer">
+                            <strong>Web Version</strong>
+                            <span>Open the live web app in your browser.</span>
+                        </a>
+                        <div class="link-card link-card--button" id="waitlist-button" role="button" tabindex="0">
+                            <strong>Android Version</strong>
+                            <span>Join the Android waitlist</span>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
             <section class="panel" id="panel-policy" role="tabpanel" aria-labelledby="tab-policy" hidden>
                 <div class="policy-layout">
                     <article class="content-card policy-card">
@@ -137,6 +155,31 @@
         </footer>
     </div>
 
+    <div class="modal-overlay" id="waitlist-modal" hidden aria-hidden="true">
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="waitlist-title">
+            <button class="modal-close" id="waitlist-close" type="button" aria-label="Close">×</button>
+            <h2 id="waitlist-title">Join the Android waitlist</h2>
+            <p id="waitlist-description">Enter your name and email to receive a notification once the Android version is public.</p>
+            <form id="waitlist-form" action="https://formspree.io/f/xjgzlwzo" method="POST">
+                <div class="modal-field">
+                    <label for="waitlist-name">Full name</label>
+                    <input id="waitlist-name" name="name" type="text" required placeholder="Your name">
+                </div>
+                <div class="modal-field">
+                    <label for="waitlist-email">Email address</label>
+                    <input id="waitlist-email" name="email" type="email" required placeholder="you@example.com">
+                </div>
+                <div class="modal-actions">
+                    <button class="button button--secondary" id="waitlist-cancel" type="button">Cancel</button>
+                    <button class="button button--primary" type="submit">Join waitlist</button>
+                </div>
+            </form>
+            <div class="modal-success" id="waitlist-success" hidden>
+                <p>Thanks! Your request has been submitted. We’ll notify you when Android is available.</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
         const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
@@ -161,7 +204,11 @@
             });
 
             if (updateHash) {
-                const nextHash = targetTab.id === 'tab-policy' ? '#privacy' : '#overview';
+                const nextHash = targetTab.id === 'tab-policy'
+                    ? '#privacy'
+                    : targetTab.id === 'tab-apps'
+                    ? '#apps'
+                    : '#overview';
                 window.history.replaceState(null, '', nextHash);
             }
         }
@@ -188,6 +235,7 @@
 
         const tabFromHash = {
             '#overview': document.getElementById('tab-overview'),
+            '#apps': document.getElementById('tab-apps'),
             '#privacy': document.getElementById('tab-policy')
         };
 
@@ -200,6 +248,85 @@
 
         window.addEventListener('hashchange', syncTabToHash);
         syncTabToHash();
+
+        const waitlistButton = document.getElementById('waitlist-button');
+        const waitlistModal = document.getElementById('waitlist-modal');
+        const waitlistClose = document.getElementById('waitlist-close');
+        const waitlistCancel = document.getElementById('waitlist-cancel');
+        const waitlistForm = document.getElementById('waitlist-form');
+        const waitlistSuccess = document.getElementById('waitlist-success');
+        const waitlistName = document.getElementById('waitlist-name');
+        const waitlistDescription = document.getElementById('waitlist-description');
+
+        function openWaitlist() {
+            waitlistModal.hidden = false;
+            waitlistModal.setAttribute('aria-hidden', 'false');
+            waitlistDescription.hidden = false;
+            waitlistForm.hidden = false;
+            waitlistSuccess.hidden = true;
+            waitlistName.focus();
+        }
+
+        function closeWaitlist() {
+            waitlistModal.hidden = true;
+            waitlistModal.setAttribute('aria-hidden', 'true');
+        }
+
+        waitlistButton?.addEventListener('click', openWaitlist);
+        waitlistButton?.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openWaitlist();
+            }
+        });
+        waitlistClose?.addEventListener('click', closeWaitlist);
+        waitlistCancel?.addEventListener('click', closeWaitlist);
+
+        waitlistModal?.addEventListener('click', (event) => {
+            if (event.target === waitlistModal) {
+                closeWaitlist();
+            }
+        });
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !waitlistModal.hidden) {
+                closeWaitlist();
+            }
+        });
+
+        waitlistForm?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const name = waitlistForm.name.value.trim();
+            const email = waitlistForm.email.value.trim();
+            if (!name || !email) {
+                return;
+            }
+
+            const formData = new FormData(waitlistForm);
+            try {
+                const response = await fetch(waitlistForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    waitlistForm.reset();
+                    waitlistDescription.hidden = true;
+                    waitlistForm.hidden = true;
+                    waitlistSuccess.hidden = false;
+                } else {
+                    const result = await response.json();
+                    throw new Error(result.error || 'Submission failed');
+                }
+            } catch (error) {
+                alert('Sorry, something went wrong. Please try again.');
+                console.error(error);
+            }
+        });
     </script>
 </body>
 </html>
