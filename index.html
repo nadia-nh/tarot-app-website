@@ -20,6 +20,7 @@
             <div class="tablist" role="tablist" aria-label="Site sections">
                 <button class="tab-button" id="tab-overview" role="tab" aria-controls="panel-overview" aria-selected="true" type="button">App Overview</button>
                 <button class="tab-button" id="tab-apps" role="tab" aria-controls="panel-apps" aria-selected="false" type="button">Try the App</button>
+                <button class="tab-button" id="tab-tech" role="tab" aria-controls="panel-tech" aria-selected="false" type="button">Technical Details</button>
                 <button class="tab-button" id="tab-policy" role="tab" aria-controls="panel-policy" aria-selected="false" type="button">Privacy Policy</button>
             </div>
         </header>
@@ -107,6 +108,28 @@
                             <span>Join the Android waitlist</span>
                         </div>
                     </div>
+                </article>
+            </section>
+
+            <section class="panel" id="panel-tech" role="tabpanel" aria-labelledby="tab-tech" hidden>
+                <article class="content-card">
+                    <h2>Technical Details</h2>
+                    <p>Arcana Flux is an Android tarot reading app built with <a href="https://developer.android.com/develop/ui/compose" target="_blank" rel="noopener noreferrer">Jetpack Compose</a> and <a href="https://m3.material.io" target="_blank" rel="noopener noreferrer">Material 3</a> for a modern, declarative UI.</p>
+                    <div class="tech-sections">
+                        <details open>
+                            <summary>MVVM and StateFlow</summary>
+                            <p>The TarotViewModel keeps the UI state and uses StateFlow to expose the current spread, card reveal state, and reading history to Compose.</p>
+                        </details>
+                        <details>
+                            <summary><a href="https://developer.android.com/training/data-storage/room" target="_blank" rel="noopener noreferrer">Room</a> local storage</summary>
+                            <p>Room stores saved readings, including the drawn cards, upright/reversed state, reading date, and the text shown to the user.</p>
+                        </details>
+                        <details>
+                            <summary>Screen navigation</summary>
+                            <p>The AppScreen enum controls navigation between Menu, Result, History, and CardDetail screens in the Compose UI.</p>
+                        </details>
+                    </div>
+                    <p class="readme-link">For more details, see the <a href="https://github.com/nadia-nh/rc-android-tarot/blob/main/README.md" target="_blank" rel="noopener noreferrer">README</a>.</p>
                 </article>
             </section>
 
@@ -205,6 +228,8 @@
             if (updateHash) {
                 const nextHash = targetTab.id === 'tab-policy'
                     ? '#privacy'
+                    : targetTab.id === 'tab-tech'
+                    ? '#tech'
                     : targetTab.id === 'tab-apps'
                     ? '#apps'
                     : '#overview';
@@ -235,6 +260,7 @@
         const tabFromHash = {
             '#overview': document.getElementById('tab-overview'),
             '#apps': document.getElementById('tab-apps'),
+            '#tech': document.getElementById('tab-tech'),
             '#privacy': document.getElementById('tab-policy')
         };
 

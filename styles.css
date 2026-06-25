@@ -270,23 +270,94 @@ a {
 }
 
 .content-card {
-    padding: 30px;
+    padding: 36px;
+}
+
+.content-card h2,
+.content-card h3 {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+.content-card h2 {
+    font-size: clamp(1.8rem, 2vw, 2.3rem);
 }
 
 .content-card h3 {
-    margin-top: 0;
-    margin-bottom: 12px;
     font-size: 1.4rem;
 }
 
 .content-card p,
 .content-card li {
     color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.85;
+    margin: 0 0 1rem;
 }
 
 .content-card ul {
-    padding-left: 20px;
-    margin: 16px 0 0;
+    padding-left: 24px;
+    margin: 20px 0 0;
+}
+
+.content-card ul li {
+    margin-bottom: 0.9rem;
+}
+
+.tech-sections {
+    display: grid;
+    gap: 16px;
+    margin-top: 18px;
+    margin-bottom: 30px;
+}
+
+.tech-sections details {
+    border: 1px solid var(--surface-border);
+    border-radius: 18px;
+    padding: 18px 20px;
+    background: rgba(255, 253, 248, 0.9);
+}
+
+.tech-sections summary {
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    outline: none;
+}
+
+.tech-sections summary::-webkit-details-marker {
+    display: none;
+}
+
+.tech-sections summary::marker {
+    display: none;
+}
+
+.tech-sections summary::before {
+    content: "▸";
+    display: inline-block;
+    width: 1.2em;
+    transition: transform 150ms ease;
+}
+
+.tech-sections details[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.tech-sections p {
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.75;
+}
+
+.readme-link {
+    margin-top: 28px;
+}
+
+.content-card a {
+    color: #1f1f1f;
+    text-decoration: underline;
 }
 
 .app-links {
