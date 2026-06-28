@@ -93,7 +93,8 @@ a {
     gap: 8px;
     padding: 6px;
     border-radius: 14px;
-    background: var(--accent-soft);
+    background: var(--bg);
+    border: 1px solid var(--surface-border);
 }
 
 .tab-button {
