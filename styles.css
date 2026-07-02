@@ -508,6 +508,11 @@ a {
     font-size: 1.15rem;
 }
 
+.policy-card h2,
+.policy-card h3 {
+    text-align: left;
+}
+
 .policy-card ul {
     padding-left: 20px;
 }
